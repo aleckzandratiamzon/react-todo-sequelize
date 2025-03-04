@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import Task from './Task';
 import "bootstrap/dist/css/bootstrap.min.css"

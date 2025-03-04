@@ -1,12 +1,15 @@
 import { DataTypes } from 'sequelize';
-import sequelize from '../sequelize.js';  // Your sequelize instance
+import sequelize from '../sequelize.js';  
 
 const Todos = sequelize.define('Todos', {
   task: {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      is: /^[a-zA-Z0-9.,]+$/,
+      is: {
+       args: /^[a-zA-Z0-9., ]+$/,
+       msg: "Task can only contain letters, numbers, commas, and spaces.",
+      },
       notNull: true,
     }
   },
@@ -20,7 +23,7 @@ const Todos = sequelize.define('Todos', {
     defaultValue: false,
   },
 }, {
-  // Additional model options (optional)
+  
 });
 
 export default Todos;

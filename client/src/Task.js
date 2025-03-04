@@ -5,12 +5,13 @@ const Task = () => {
   const [data, setData] = useState([]);
   const [task, setTask] = useState('');
   const [error, setError] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [sucessMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
-    // Fetch tasks from your server (make sure this endpoint is correct)
-    axios.get('http://localhost:3000/todos')
+    axios.get('http://localhost:3001/todos')
       .then(res => {
-        console.log('Fetched data:', res.data);  // Log the data to check if it's an array
+        console.log('Fetched data:', res.data);  
         setData(res.data);
       })
       .catch(err => console.log(err));
@@ -18,22 +19,20 @@ const Task = () => {
   
 
   const deleteTask = (id) => {
-    axios.put(`http://localhost:3000/todos/${id}`, {
+    axios.put(`http://localhost:3001/todos/${id}`, {
       is_deleted: true
     })
       .then(res => {
-        // Remove the deleted task from the UI by filtering it out from the state
         setData(data.filter(task => task.id !== id));
       })
       .catch(err => console.log(err));
   };
 
   const markAsFinished = (id) => {
-    axios.put(`http://localhost:3000/todos/${id}`, {
+    axios.put(`http://localhost:3001/todos/${id}`, {
       status: 'Finished'
     })
       .then(res => {
-        // Update the status of the task in the UI
         setData(data.map(task =>
           task.id === id ? { ...task, status: 'Finished' } : task
         ));
@@ -46,30 +45,34 @@ const Task = () => {
     validateTask();
     console.log(task)
   }
-  
-  const handleSubmit = (e) =>{
+
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-
+    console.log("form submitted, task:", task);
     const submitButton = document.getElementById("submit-button");
-    const taskForm = document.getElementById("task-form");
-
+  
     submitButton.disabled = true;
-
     submitButton.innerText = "Adding task...";
-
-    taskForm.submit();
-
-    axios.post('http://localhost:3000/todos',{ task })
-    .then(res =>{
-      console.log(res)
-      setTask('')
-      setData(prevData => [...prevData, res.data]); 
-    })
-    .catch(err => {console.log(err)
-      setError(err);
-    })
-
-  }
+  
+    axios.post('http://localhost:3001/todos', { task })
+      .then(res => {
+        console.log(res);
+        setData(prevData => [res.data.todo, ...prevData]); 
+        setTask('');
+        setSuccessMessage(res.data.message);
+        setErrorMessage('');
+        submitButton.disabled = false;
+        submitButton.innerText = "Add new task";
+      })
+      .catch(err => {
+        console.log(err);
+        setErrorMessage(err.response.data.error || 'Failed to add task');
+        setSuccessMessage('');
+        submitButton.disabled = false;
+        submitButton.innerText = "Add new task";
+      });
+  };
 
   const validateTask =() =>{
     var taskInput = document.getElementById("form1").value;
@@ -85,6 +88,12 @@ const Task = () => {
     }
   }
 
+  const handleClose = () => {
+    const close = document.getElementById("close");
+    close.classList.add("d-none");
+    // window.location.reload();
+  }
+
   return (
     <>
       <section className="vh-100" style={{ backgroundColor: '#eee' }}>
@@ -93,18 +102,23 @@ const Task = () => {
             <div className="col col-lg-9 col-xl-7">
               <div className="card rounded-3">
                 <div className="card-body p-4">
-                {/* <div id="alert-success" class="alert alert-success">
-                  {error}
-                </div> */}
+                {sucessMessage && (<div id='close' className="alert alert-success" role="alert">
+                  {sucessMessage}
+                  <button type="button" onClick={handleClose} className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>)}
+                {errorMessage && (<div id='close' className="alert alert-danger" role="alert">
+                  {errorMessage}
+                  <button type="button" onClick={handleClose} className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>)}
                   <h4 className="text-center my-3 pb-3">To Do App</h4>
-                  <form className="row row-cols-lg-auto g-3 justify-content-center align-items-center mb-4 pb-2"  id='task-form'>
+                  <form className="row row-cols-lg-auto g-3 justify-content-center align-items-center mb-4 pb-2"  id='task-form' onSubmit={handleSubmit}>
                     <div className="col-12">
                       <div data-mdb-input-init className="form-outline">
                         <input onChange={handleChange} value={task} type="text" id="form1" className="form-control" placeholder='Enter task here' required/>
                       </div>
                     </div>
                     <div className="col-12">
-                      <button type="submit" data-mdb-button-init data-mdb-ripple-init className="btn btn-primary" id='submit-button' onClick={handleSubmit}>Add new task</button>
+                      <button type="submit" data-mdb-button-init data-mdb-ripple-init className="btn btn-primary" id='submit-button' >Add new task</button>
                     </div>
                   </form>
                   <p class="fs-6 text-danger d-flex justify-content-center d-none" id="error-message">{error}</p>

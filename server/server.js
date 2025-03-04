@@ -4,10 +4,10 @@ import sequelize from './sequelize.js';
 import Todos from './models/Todos.js';  
 
 const app = express();
-const port = 3000;
+const port = 3001;
 
 // Hardcoded absolute path to the build folder
-const buildPath = path.resolve('C:/Users/Servo/Documents/Express/todo_react/client/build');
+const buildPath = path.resolve('C:/Users/Servo/Documents/Express/sequelize-todo/client/build');
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -26,14 +26,17 @@ app.post('/todos', async (req, res) => {
   try {
     const { task } = req.body;
 
-
+ 
     const newTodo = await Todos.create({
       task,
       status: 'In progress',
       is_deleted: false,
     });
 
-    res.status(201).json(newTodo); 
+    res.status(201).json({
+      message: 'Task created successfully',
+      todo: newTodo,
+    }); 
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to create todo' });
