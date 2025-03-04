@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import axios from 'axios';
 
 const Task = () => {
@@ -16,6 +16,24 @@ const Task = () => {
       })
       .catch(err => console.log(err));
   }, []);
+
+  useEffect(() => {
+    if (sucessMessage) {
+      setTimeout(() => {
+        setSuccessMessage('');
+      }, 5000);
+      return () => clearTimeout();
+    }
+  });
+
+  useEffect(() => {
+    if (errorMessage) {
+      setTimeout(() => {
+        setErrorMessage('');
+      }, 5000);
+      return () => clearTimeout();
+    }
+  });
   
 
   const deleteTask = (id) => {
@@ -91,7 +109,7 @@ const Task = () => {
   const handleClose = () => {
     const close = document.getElementById("close");
     close.classList.add("d-none");
-    // window.location.reload();
+    window.location.reload();
   }
 
   return (
@@ -114,7 +132,7 @@ const Task = () => {
                   <form className="row row-cols-lg-auto g-3 justify-content-center align-items-center mb-4 pb-2"  id='task-form' onSubmit={handleSubmit}>
                     <div className="col-12">
                       <div data-mdb-input-init className="form-outline">
-                        <input onChange={handleChange} value={task} type="text" id="form1" className="form-control" placeholder='Enter task here' required/>
+                        <input onChange={handleChange} value={task} type="text" id="form1" className="form-control" placeholder='Enter task here' maxLength={100} required/>
                       </div>
                     </div>
                     <div className="col-12">

@@ -20,7 +20,7 @@ sequelize.sync()
   });
 
 // Import the TodoRoutes and add a prefix (optional but recommended)
-app.use('/api', TodoRoutes);  // Add /api prefix for all Todo-related routes
+app.use('/api', TodoRoutes); 
 
 // Serve static files from the React app build folder
 app.use(express.static(buildPath));

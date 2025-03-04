@@ -10,6 +10,7 @@ const Todos = sequelize.define('Todos', {
        args: /^[a-zA-Z0-9., ]+$/,
        msg: "Task can only contain letters, numbers, commas, and spaces.",
       },
+      len: [1,100],
       notNull: true,
     }
   },
