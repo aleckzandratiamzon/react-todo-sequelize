@@ -9,7 +9,7 @@ const Task = () => {
   const [sucessMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
-    axios.get('http://localhost:3001/todos')
+    axios.get('http://localhost:3001/api/todos')
       .then(res => {
         console.log('Fetched data:', res.data);  
         setData(res.data);
@@ -19,7 +19,7 @@ const Task = () => {
   
 
   const deleteTask = (id) => {
-    axios.put(`http://localhost:3001/todos/${id}`, {
+    axios.put(`http://localhost:3001/api/todos/${id}`, {
       is_deleted: true
     })
       .then(res => {
@@ -29,7 +29,7 @@ const Task = () => {
   };
 
   const markAsFinished = (id) => {
-    axios.put(`http://localhost:3001/todos/${id}`, {
+    axios.put(`http://localhost:3001/api/todos/${id}`, {
       status: 'Finished'
     })
       .then(res => {
@@ -55,7 +55,7 @@ const Task = () => {
     submitButton.disabled = true;
     submitButton.innerText = "Adding task...";
   
-    axios.post('http://localhost:3001/todos', { task })
+    axios.post('http://localhost:3001/api/todos', { task })
       .then(res => {
         console.log(res);
         setData(prevData => [res.data.todo, ...prevData]); 
